@@ -1,0 +1,110 @@
+/**
+ * 
+ */
+package ass.ui;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import ass.user.Customer;
+
+/**
+ * @author lsong
+ *
+ */
+public class DBConection {
+	private static final String DBNAME = "jdbc:sqlite:noName.s3db";
+	private Connection conn;
+	private ArrayList<Customer> customers = new ArrayList<Customer>();
+	
+	
+	public DBConection() {
+		super();
+	}
+
+
+	/**
+	 * @return the customers
+	 */
+	public ArrayList<Customer> getCustomers() {
+		return customers;
+	}
+
+
+	/**
+	 * @param customers the customers to set
+	 */
+	public void setCustomers(ArrayList<Customer> customers) {
+		this.customers = customers;
+	}
+
+
+	/**
+	 * @return the conn
+	 */
+	public Connection getConn() {
+		return conn;
+	}
+
+
+	/**
+	 * @param conn the conn to set
+	 */
+	public void setConn(Connection conn) {
+		this.conn = conn;
+	}
+	
+	public void openConn(){
+		try {
+			Class.forName("org.sqlite.JDBC");
+			this.conn = DriverManager
+					.getConnection(this.DBNAME);
+			System.out.println("Database connected");
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("Connection failed");
+		}
+		
+		
+	}
+	
+	public void closeConn(){
+		try {
+			this.conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void readData(){
+		try {
+			Statement sta = this.conn.createStatement();
+			ResultSet rs = sta.executeQuery("select * from user");
+			while (rs.next()) {
+	            System.out.printf("%-5s%-15s%-15s%-15s%-15s%-25s%-15s%"
+	            		+ "-15s%-15s%-15s%-15s\n",
+	            		rs.getString("userID"), rs.getString("firstName"), 
+	            		rs.getString("lastName"),
+	            		rs.getString("title"), rs.getString("phoneNumber"), 
+	            		rs.getString("email"),
+	            		rs.getString("address"), rs.getString("DOB"), 
+	            		rs.getString("userName"),
+	            		rs.getString("password"), rs.getString("userType"));
+	           
+	            
+	        }
+	        rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+}
